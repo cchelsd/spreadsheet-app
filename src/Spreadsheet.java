@@ -12,6 +12,11 @@ public class Spreadsheet {
 
     public Spreadsheet(final int sheetSize) {
         cells = new Cell[sheetSize][sheetSize];
+        for (int x = 0; x < sheetSize; x++) {
+            for (int y = 0; y < sheetSize; y++) {
+                cells[x][y] = new Cell();
+            }
+        }
     }
 
     /**
@@ -29,12 +34,20 @@ public class Spreadsheet {
     }
 
     /**
-     * Changes the given cellToken's Stack to the Stack provided, then recalculates it's formula.
+     * Changes the given cellToken's Stack to the Stack provided, then recalculates its formula.
      * @param cellToken The CellToken to change.
      * @param expTreeTokenStack The new formula this CellToken should have.
      */
-    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final Stack expTreeTokenStack) {
+    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final Stack<Token> expTreeTokenStack) {
+        cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(expTreeTokenStack);
+    }
 
+    public int evaluateCell(final CellToken theCellToken) {
+        return cells[theCellToken.getRow()][theCellToken.getColumn()].evaluate(this);
+    }
+
+    public Cell getCell(final int theRow, final int theColumn) {
+        return cells[theRow][theColumn];
     }
 
     /**
@@ -168,18 +181,18 @@ public class Spreadsheet {
      * This algorithm follows the algorithm described in Weiss, pages 105-108.
      */
     Stack getFormula(String formula) {
-        Stack returnStack = new Stack();  // stack of Tokens (representing a postfix expression)
+        Stack returnStack = new Stack<Token>();  // stack of Tokens (representing a postfix expression)
         boolean error = false;
         char ch = ' ';
 
         int literalValue = 0;
 
-        CellToken cellToken = null;
+        CellToken cellToken = new CellToken();
         int column = 0;
         int row = 0;
 
         int index = 0;  // index into formula
-        Stack operatorStack = new Stack();  // stack of operators
+        Stack<Token> operatorStack = new Stack<>();  // stack of operators
 
         while (index < formula.length() ) {
             // get rid of leading whitespace characters
@@ -222,7 +235,18 @@ public class Spreadsheet {
                             }
                         }
                         break;
+                    case OperatorToken.RightParen:
+                        stackOperator = (OperatorToken) operatorStack.pop();
+                        // This code does not handle operatorStack underflow.
+                        while (stackOperator.getToken() != OperatorToken.LeftParen) {
+                            // pop operators off the stack until a LeftParen appears and
+                            // place the operators on the output stack
+                            returnStack.push(stackOperator);
+                            stackOperator = (OperatorToken) operatorStack.pop();
+                        }
 
+                        index++;
+                        break;
                     default:
                         // This case should NEVER happen
                         System.out.println("Error in getFormula.");
@@ -234,18 +258,6 @@ public class Spreadsheet {
 
                 index++;
 
-            } else if (ch == ')') {    // maybe define OperatorToken.RightParen ?
-                OperatorToken stackOperator;
-                stackOperator = (OperatorToken) operatorStack.pop();
-                // This code does not handle operatorStack underflow.
-                while (stackOperator.getToken() != OperatorToken.LeftParen) {
-                    // pop operators off the stack until a LeftParen appears and
-                    // place the operators on the output stack
-                    returnStack.push(stackOperator);
-                    stackOperator = (OperatorToken) operatorStack.pop();
-                }
-
-                index++;
             } else if (Character.isDigit(ch)) {
                 // We found a literal token
                 literalValue = ch - '0';
@@ -265,6 +277,7 @@ public class Spreadsheet {
             } else if (Character.isUpperCase(ch)) {
                 // We found a cell reference token
                 //CellToken cellToken = new CellToken();
+                cellToken = new CellToken();
                 index = getCellToken(formula, index, cellToken);
                 if (cellToken.getRow() == -1) {
                     error = true;
@@ -348,9 +361,10 @@ public class Spreadsheet {
 
     /**
      * Prints out the formula inside the given CellToken
-     * @param cellToken The CellToken to print the forumla from.
+     * @param cellToken The CellToken to print the formula from.
      */
     public void printCellFormula(CellToken cellToken) {
+        cells[cellToken.getRow()][cellToken.getColumn()].printExpressionTree();
     }
 
     /**

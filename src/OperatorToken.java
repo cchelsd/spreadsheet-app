@@ -5,7 +5,7 @@
  * @author Elias Peterson
  * @author Alexis Zakrzewski
  */
-public class OperatorToken {
+public class OperatorToken extends Token {
     public static final char Plus = '+';
     public static final char Minus = '-';
     public static final char Mult = '*';
@@ -21,6 +21,10 @@ public class OperatorToken {
 
     public char getToken() {
         return myToken;
+    }
+
+    public String toString() {
+        return Character.toString(myToken);
     }
 
     /**
