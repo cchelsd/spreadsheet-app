@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class ExpressionTree {
     private ExpressionTreeNode root;
 
@@ -14,6 +16,14 @@ public class ExpressionTree {
         printTreeNode(theNode.getLeft());
         theNode.printToken();
         printTreeNode(theNode.getRight());
+    }
+
+    public void findDependencies(final ExpressionTreeNode theNode, final List<CellToken> theList) {
+        if(theNode == null) return;
+        // If this node is a CellToken, then add it to the list.
+        if(theNode.getToken() instanceof CellToken) theList.add((CellToken)theNode.getToken());
+        findDependencies(theNode.getLeft(), theList);
+        findDependencies(theNode.getRight(), theList);
     }
 
     /**

@@ -10,6 +10,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
+/*
+    TODO: Fix parentheses processing error
+    TODO: Add GUI interface
+    TODO: Fix print formula
+    TODO: Implement topsort
+ */
+
 public class SpreadsheetApp {
 
     /**

@@ -1,4 +1,5 @@
-import java.util.Stack;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Spreadsheet is a class containing a spreadsheet of cells with equations.
@@ -40,7 +41,47 @@ public class Spreadsheet {
      */
     public void changeCellFormulaAndRecalculate(final CellToken cellToken, final Stack<Token> expTreeTokenStack) {
         cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(expTreeTokenStack);
+
+        Stack<CellToken> processStack = new Stack<>(); // Stores which cells to process, and in what order.
+        ConcurrentHashMap<CellToken, List<CellToken>> cellDependencies = new ConcurrentHashMap<>(); // All dependencies of a given cell.
+
+        for(int y = 0; y < getNumRows(); y++) {
+            for(int x = 0; x < getNumColumns(); x++) {
+                CellToken cToken = new CellToken();
+                cToken.setRow(y);
+                cToken.setColumn(x);
+                cellDependencies.put(cToken, getCell(cToken).getDependencies());
+            }
+        }
+
+        while(!cellDependencies.isEmpty()) {
+            boolean removedValue = false;
+            for (CellToken t : cellDependencies.keySet()) {
+                // If this cell has an empty list of dependencies, remove it from the hashtable.
+                if (cellDependencies.get(t).isEmpty()) {
+                    removedValue = true;
+                    cellDependencies.remove(t);
+                    processStack.push(t);
+                    for (CellToken u : cellDependencies.keySet()) {
+                        // If this cell has a dependent, it's removed. if not, then it won't.
+                        cellDependencies.get(u).remove(t);
+                    }
+                }
+            }
+            if (!removedValue) {
+                System.out.println("Cycle found");
+                System.exit(-1);
+            }
+
+        }
+
+        // Now iterate through the stack of cells.
+        while(!processStack.isEmpty()) {
+            CellToken cToken = processStack.pop();
+            getCell(cToken).evaluate(this);
+        }
     }
+
 
     public int evaluateCell(final CellToken theCellToken) {
         return cells[theCellToken.getRow()][theCellToken.getColumn()].evaluate(this);
@@ -49,6 +90,8 @@ public class Spreadsheet {
     public Cell getCell(final int theRow, final int theColumn) {
         return cells[theRow][theColumn];
     }
+
+    public Cell getCell(final CellToken theToken) { return getCell(theToken.getRow(), theToken.getColumn()); }
 
     /**
      * getCellToken
@@ -224,7 +267,7 @@ public class Spreadsheet {
                         OperatorToken stackOperator;
                         while (!operatorStack.isEmpty()) {
                             stackOperator = (OperatorToken) operatorStack.peek();
-                            if ( (stackOperator.priority() >= OperatorToken.operatorPriority(ch)) &&
+                            if ((stackOperator.priority() >= OperatorToken.operatorPriority(ch)) &&
                                     (stackOperator.getToken() != OperatorToken.LeftParen) ) {
 
                                 // output the operator to the return stack
@@ -356,7 +399,18 @@ public class Spreadsheet {
      * Prints out the values inside this spreadsheet.
      */
     public void printValues() {
-
+        for(int y = 0; y < getNumRows(); y++) {
+            for(int x = 0; x < getNumColumns(); x++) {
+                CellToken cellToken = new CellToken();
+                cellToken.setRow(y);
+                cellToken.setColumn(x);
+                System.out.print(printCellToken(cellToken));
+                System.out.print(": ");
+                System.out.print(evaluateCell(cellToken));
+                System.out.print(" | ");
+            }
+            System.out.println();
+        }
     }
 
     /**

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class Cell {
@@ -6,10 +8,13 @@ public class Cell {
     // the expression tree below represents the formula.
     private final ExpressionTree myExpressionTree;
 
+    private List<Cell> children;
+
     public Cell() {
         myExpressionTree = new ExpressionTree();
         myFormula = "";
         myValue = 0;
+        children = new ArrayList<Cell>();
     }
 
     public int evaluate (final Spreadsheet theSpreadsheet) {
@@ -61,7 +66,17 @@ public class Cell {
         return returnTree;
     }
 
+    /**
+     * Finds all cells that this cell depends on and returns them as a list of CellTokens.
+     */
+    public List<CellToken> getDependencies() {
+        List<CellToken> dependencies = new ArrayList<>();
+        myExpressionTree.findDependencies(myExpressionTree.getRoot(), dependencies);
+        return dependencies;
+    }
+
     public void printExpressionTree() {
+        // TODO: Printing out formulas that include parentheses causes issues. Need to fix!
         myExpressionTree.printTree();
     }
 
