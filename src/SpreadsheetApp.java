@@ -13,8 +13,7 @@ import java.util.Stack;
 /*
     TODO: Fix parentheses processing error
     TODO: Add GUI interface
-    TODO: Fix print formula
-    TODO: Implement topsort
+    TODO: Fix print formula (Just store a string of the original input)
  */
 
 public class SpreadsheetApp {
@@ -100,7 +99,6 @@ public class SpreadsheetApp {
 
         System.out.println("Enter the cell's new formula: ");
         inputFormula = readString();
-        expTreeTokenStack = theSpreadsheet.getFormula(inputFormula);
     
         /*
         // This code prints out the expression stack from
@@ -112,7 +110,7 @@ public class SpreadsheetApp {
         }
         */
 
-        theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, expTreeTokenStack);
+        theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, inputFormula);
         System.out.println();
     }
 

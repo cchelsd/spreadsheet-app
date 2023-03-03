@@ -9,7 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Alexis Zakrzewski
  */
 public class Spreadsheet {
-    private Cell[][] cells;
+    /**
+     * The Cells of this spreadsheet.
+     */
+    private final Cell[][] cells;
 
     public Spreadsheet(final int sheetSize) {
         cells = new Cell[sheetSize][sheetSize];
@@ -37,10 +40,13 @@ public class Spreadsheet {
     /**
      * Changes the given cellToken's Stack to the Stack provided, then recalculates its formula.
      * @param cellToken The CellToken to change.
-     * @param expTreeTokenStack The new formula this CellToken should have.
+     * @param theFormula The formula for this Cell to have.
      */
-    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final Stack<Token> expTreeTokenStack) {
+    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final String theFormula) {
+        Stack<Token> expTreeTokenStack = getFormula(theFormula);
+        // Update our cell with the new expression tree stack we were given.
         cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(expTreeTokenStack);
+        getCell(cellToken).setFormula(theFormula);
 
         Stack<CellToken> processStack = new Stack<>(); // Stores which cells to process, and in what order.
         ConcurrentHashMap<CellToken, List<CellToken>> cellDependencies = new ConcurrentHashMap<>(); // All dependencies of a given cell.
@@ -82,15 +88,30 @@ public class Spreadsheet {
         }
     }
 
-
+    /**
+     * Evaluates the formula in this cell and returns the result.
+     * @param theCellToken The CellToken of the cell we want to evaluate.
+     * @return The result of this cell's formula.
+     */
     public int evaluateCell(final CellToken theCellToken) {
         return cells[theCellToken.getRow()][theCellToken.getColumn()].evaluate(this);
     }
 
+    /**
+     * Gets the cell at the specified row and column.
+     * @param theRow The row of the cell.
+     * @param theColumn The column of the cell.
+     * @return The Cell of this spreadsheet.
+     */
     public Cell getCell(final int theRow, final int theColumn) {
         return cells[theRow][theColumn];
     }
 
+    /**
+     * Gets the cell at the specified CellToken.
+     * @param theToken The CellToken referring to a given cell.
+     * @return The Cell from this spreadsheet.
+     */
     public Cell getCell(final CellToken theToken) { return getCell(theToken.getRow(), theToken.getColumn()); }
 
     /**
