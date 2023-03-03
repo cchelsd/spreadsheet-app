@@ -28,6 +28,10 @@ public class GUI extends JFrame {
         myHeader = myTable.getTableHeader();
     }
 
+    public static void main(String[] args) {
+        new GUI().start();
+    }
+
     public void createRowHeader() {
         myRowHeader = new JTable(new AbstractTableModel() {
             @Override
