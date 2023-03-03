@@ -79,9 +79,9 @@ public class Cell {
         return dependencies;
     }
 
-    public void printExpressionTree() {
+    public String getFormula() {
         // TODO: Printing out formulas that include parentheses causes issues. Need to fix!
-        System.out.println(myFormula);
+        return myFormula;
     }
 
 }
