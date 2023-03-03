@@ -19,10 +19,6 @@ public class GUI extends JFrame {
     private final JTableHeader myHeader;
     private Object[][] data;
     private int activeRow, activeCol;
-
-    public static void main(String[] args) {
-        new GUI().start();
-    }
     public GUI() {
         mySheet = new Spreadsheet(20);
         data = new Object[mySheet.getNumRows()][mySheet.getNumColumns()];
@@ -30,6 +26,10 @@ public class GUI extends JFrame {
         myTable = new JTable(myModel);
         myScrollPane = new JScrollPane(myTable);
         myHeader = myTable.getTableHeader();
+    }
+
+    public static void main(String[] args) {
+        new GUI().start();
     }
 
     public void createRowHeader() {
@@ -125,17 +125,19 @@ public class GUI extends JFrame {
         myTable.setShowGrid(true);
         myTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         myTable.setCellSelectionEnabled(true);
-
-        myTable.getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                activeRow = e.getFirstRow();
-                activeCol = e.getColumn();
-            }
-        });
+        myTable.getModel().addTableModelListener(new SpreadsheetListener());
         myHeader.setBackground(Color.LIGHT_GRAY);
         createRowHeader();
         add(myScrollPane);
         createInputBar();
+    }
+
+    public class SpreadsheetListener implements TableModelListener {
+        public SpreadsheetListener() {
+            myTable.getModel().addTableModelListener(this);
+        }
+        @Override
+        public void tableChanged(TableModelEvent e) {
+        }
     }
 }
