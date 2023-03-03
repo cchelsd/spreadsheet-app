@@ -122,10 +122,6 @@ public class GUI extends JFrame {
         }
         @Override
         public void tableChanged(TableModelEvent e) {
-            activeRow = e.getFirstRow();
-            activeCol = e.getColumn();
-            CellToken token = new CellToken(activeRow, activeCol);
-            mySheet.evaluateCell(token);
         }
     }
 }
