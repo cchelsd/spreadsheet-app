@@ -95,40 +95,6 @@ public class GUI extends JFrame {
         }
     }
 
-    public void setBarFormula() {
-        myTable.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = myTable.getSelectedRow();
-                int col = myTable.getSelectedColumn();
-                CellToken cellToken = new CellToken();
-                cellToken.setRow(row);
-                cellToken.setColumn(col);
-                Cell cell = mySheet.getCell(cellToken);
-                myInputBar.setText(cell.getFormula());
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
-    }
-
     public void setUpComponents() {
         myTable.setGridColor(Color.BLACK);
         myTable.setShowGrid(true);
