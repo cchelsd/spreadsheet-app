@@ -110,6 +110,7 @@ public class GUI extends JFrame {
         myTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         myTable.setCellSelectionEnabled(true);
         myTable.getModel().addTableModelListener(new SpreadsheetListener());
+        myTable.setDefaultEditor(Object.class, null);
         myHeader.setBackground(Color.LIGHT_GRAY);
         createRowHeader();
         add(myScrollPane);
