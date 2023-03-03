@@ -42,10 +42,9 @@ public class GUI extends JFrame {
             public int getColumnCount() {
                 return 1;
             }
-
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
-                return Integer.toString(rowIndex + 1);
+                return Integer.toString(rowIndex);
             }
         });
         JViewport rowHeaderViewport = new JViewport();
@@ -73,6 +72,8 @@ public class GUI extends JFrame {
             cellToken.setRow(row);
             cellToken.setColumn(col);
             mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
+            Cell cell = mySheet.getCell(cellToken);
+            myInputBar.setText(cell.getFormula());
             updateAllCells();
             //myTable.setValueAt(formula, row, col);
         });
