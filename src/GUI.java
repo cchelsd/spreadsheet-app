@@ -106,6 +106,37 @@ public class GUI extends JFrame {
         createRowHeader();
         add(myScrollPane);
         createInputBar();
+        myTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = myTable.getSelectedRow();
+                int col = myTable.getSelectedColumn();
+                CellToken curr = new CellToken();
+                curr.setRow(row);
+                curr.setColumn(col);
+                Cell cell = mySheet.getCell(curr);
+                myInputBar.setText(cell.getFormula());
+
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
     }
 
     public class SpreadsheetListener implements TableModelListener {
