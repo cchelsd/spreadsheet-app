@@ -75,7 +75,7 @@ public class GUI extends JFrame {
             try {
                 mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             } catch (ArrayIndexOutOfBoundsException a) {
-                JOptionPane.showMessageDialog(myTable, "Please select a cell.");
+                JOptionPane.showMessageDialog(this, "Please select a cell.");
             }
             mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             updateAllCells();
@@ -101,7 +101,11 @@ public class GUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = myTable.getSelectedRow();
                 int col = myTable.getSelectedColumn();
-
+                CellToken cellToken = new CellToken();
+                cellToken.setRow(row);
+                cellToken.setColumn(col);
+                Cell cell = mySheet.getCell(cellToken);
+                myInputBar.setText(cell.getFormula());
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -144,6 +148,7 @@ public class GUI extends JFrame {
         }
         @Override
         public void tableChanged(TableModelEvent e) {
+
         }
     }
 }
