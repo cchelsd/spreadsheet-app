@@ -21,6 +21,10 @@ public class Cell {
         return myExpressionTree.evaluate(myExpressionTree.getRoot(), theSpreadsheet);
     }
 
+    public void setFormula(final String theFormula) {
+        myFormula = theFormula;
+    }
+
     // Build an expression tree from a stack of ExpressionTreeTokens
     public void buildExpressionTree (Stack<Token> s) {
         myExpressionTree.setRoot(getExpressionTree(s));
@@ -75,9 +79,9 @@ public class Cell {
         return dependencies;
     }
 
-    public void printExpressionTree() {
+    public String getFormula() {
         // TODO: Printing out formulas that include parentheses causes issues. Need to fix!
-        myExpressionTree.printTree();
+        return myFormula;
     }
 
 }

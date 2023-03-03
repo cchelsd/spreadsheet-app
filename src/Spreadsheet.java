@@ -9,7 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Alexis Zakrzewski
  */
 public class Spreadsheet {
-    private Cell[][] cells;
+    /**
+     * The Cells of this spreadsheet.
+     */
+    private final Cell[][] cells;
 
     public Spreadsheet(final int sheetSize) {
         cells = new Cell[sheetSize][sheetSize];
@@ -37,12 +40,16 @@ public class Spreadsheet {
     /**
      * Changes the given cellToken's Stack to the Stack provided, then recalculates its formula.
      * @param cellToken The CellToken to change.
-     * @param expTreeTokenStack The new formula this CellToken should have.
+     * @param theFormula The formula for this Cell to have.
      */
-    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final Stack<Token> expTreeTokenStack) {
+    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final String theFormula) {
+        Stack<Token> expTreeTokenStack = getFormula(theFormula);
+        String previousFormula = getCell(cellToken).getFormula();
+        // Update our cell with the new expression tree stack we were given.
         cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(expTreeTokenStack);
+        getCell(cellToken).setFormula(theFormula);
 
-        Stack<CellToken> processStack = new Stack<>(); // Stores which cells to process, and in what order.
+        Queue<CellToken> processStack = new LinkedList<>(); // Stores which cells to process, and in what order.
         ConcurrentHashMap<CellToken, List<CellToken>> cellDependencies = new ConcurrentHashMap<>(); // All dependencies of a given cell.
 
         for(int y = 0; y < getNumRows(); y++) {
@@ -61,36 +68,55 @@ public class Spreadsheet {
                 if (cellDependencies.get(t).isEmpty()) {
                     removedValue = true;
                     cellDependencies.remove(t);
-                    processStack.push(t);
+                    processStack.add(t);
                     for (CellToken u : cellDependencies.keySet()) {
                         // If this cell has a dependent, it's removed. if not, then it won't.
                         cellDependencies.get(u).remove(t);
                     }
                 }
             }
+            // If we didn't remove anything during a loop, a cycle has been found.
             if (!removedValue) {
                 System.out.println("Cycle found");
-                System.exit(-1);
+                //changeCellFormulaAndRecalculate(cellToken, previousFormula);
+                // Run this entire method but with this cell's original formula.
+                changeCellFormulaAndRecalculate(cellToken, previousFormula);
+                break;
             }
 
         }
 
         // Now iterate through the stack of cells.
         while(!processStack.isEmpty()) {
-            CellToken cToken = processStack.pop();
+            CellToken cToken = processStack.remove();
             getCell(cToken).evaluate(this);
         }
     }
 
-
+    /**
+     * Evaluates the formula in this cell and returns the result.
+     * @param theCellToken The CellToken of the cell we want to evaluate.
+     * @return The result of this cell's formula.
+     */
     public int evaluateCell(final CellToken theCellToken) {
         return cells[theCellToken.getRow()][theCellToken.getColumn()].evaluate(this);
     }
 
+    /**
+     * Gets the cell at the specified row and column.
+     * @param theRow The row of the cell.
+     * @param theColumn The column of the cell.
+     * @return The Cell of this spreadsheet.
+     */
     public Cell getCell(final int theRow, final int theColumn) {
         return cells[theRow][theColumn];
     }
 
+    /**
+     * Gets the cell at the specified CellToken.
+     * @param theToken The CellToken referring to a given cell.
+     * @return The Cell from this spreadsheet.
+     */
     public Cell getCell(final CellToken theToken) { return getCell(theToken.getRow(), theToken.getColumn()); }
 
     /**
@@ -418,7 +444,7 @@ public class Spreadsheet {
      * @param cellToken The CellToken to print the formula from.
      */
     public void printCellFormula(CellToken cellToken) {
-        cells[cellToken.getRow()][cellToken.getColumn()].printExpressionTree();
+        System.out.println(getCell(cellToken).getFormula());
     }
 
     /**
