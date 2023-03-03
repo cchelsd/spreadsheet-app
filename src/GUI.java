@@ -64,7 +64,6 @@ public class GUI extends JFrame {
     }
 
     public void createInputBar() {
-
         myInputBar = new JTextField();
         myInputBar.addActionListener(e -> {
             String formula = myInputBar.getText();
@@ -73,11 +72,7 @@ public class GUI extends JFrame {
             CellToken cellToken = new CellToken();
             cellToken.setRow(row);
             cellToken.setColumn(col);
-            try {
-                mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
-            } catch (ArrayIndexOutOfBoundsException a) {
-                JOptionPane.showMessageDialog(myTable, "Please select a cell.");
-            }
+            mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             updateAllCells();
             //myTable.setValueAt(formula, row, col);
         });
