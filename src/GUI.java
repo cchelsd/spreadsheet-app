@@ -69,9 +69,25 @@ public class GUI extends JFrame {
             String formula = myInputBar.getText();
             int row = myTable.getSelectedRow();
             int col = myTable.getSelectedColumn();
-            myTable.setValueAt(formula, row, col);
+            CellToken cellToken = new CellToken();
+            cellToken.setRow(row);
+            cellToken.setColumn(col);
+            mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
+            updateAllCells();
+            //myTable.setValueAt(formula, row, col);
         });
         add(myInputBar, BorderLayout.NORTH);
+    }
+
+    public void updateAllCells() {
+        for(int x = 0; x < mySheet.getNumColumns(); x++) {
+            for(int y = 0; y < mySheet.getNumRows(); y++) {
+                CellToken cellToken = new CellToken();
+                cellToken.setRow(y);
+                cellToken.setColumn(x);
+                myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
+            }
+        }
     }
 
     public void setBarFormula() {
