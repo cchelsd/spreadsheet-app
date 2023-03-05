@@ -6,7 +6,7 @@
  * @author Alexis Zakrzewski
  */
 public class LiteralToken extends Token {
-    private int myValue;
+    private final int myValue;
 
     public LiteralToken(final int theValue) {
         myValue = theValue;

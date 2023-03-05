@@ -10,12 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
-/*
-    TODO: Fix parentheses processing error
-    TODO: Add GUI interface
-    TODO: Fix print formula (Just store a string of the original input)
- */
-
 public class SpreadsheetApp {
 
     /**

@@ -2,86 +2,73 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Cell represents an individual Cell in the spreadsheet. It contains a formula and
+ * can be evaluated to return its result.
+ * @author Chelsea Dacones
+ * @author Makai Martines
+ * @author Elias Peterson
+ * @author Alexis Zakrzewski
+ */
 public class Cell {
+    /**
+     * The formula inside this cell. Printed when the cell is selected in the GUI.
+     */
     private String myFormula;
-    private int myValue;
-    // the expression tree below represents the formula.
+
+    /**
+     * The ExpressionTree of this cell, representing its formula for evaluation.
+     */
     private final ExpressionTree myExpressionTree;
 
-    private List<Cell> children;
-
+    /**
+     * Constructs a new Cell object and initializes its values.
+     */
     public Cell() {
         myExpressionTree = new ExpressionTree();
         myFormula = "";
-        myValue = 0;
-        children = new ArrayList<Cell>();
     }
 
+    /**
+     * Evaluates this Cell's ExpressionTree and returns the result.
+     * @param theSpreadsheet The Spreadsheet this Cell is in.
+     * @return The result of this Cell's formula.
+     */
     public int evaluate (final Spreadsheet theSpreadsheet) {
         return myExpressionTree.evaluate(myExpressionTree.getRoot(), theSpreadsheet);
     }
 
+    /**
+     * @return The formula of this cell as a String.
+     */
+    public String getFormula() {
+        return myFormula;
+    }
+
+    /**
+     * Sets the String representation of this Cell's formula.
+     * @param theFormula The String to store.
+     */
     public void setFormula(final String theFormula) {
         myFormula = theFormula;
     }
 
-    // Build an expression tree from a stack of ExpressionTreeTokens
-    public void buildExpressionTree (Stack<Token> s) {
-        myExpressionTree.setRoot(getExpressionTree(s));
-        if (!s.isEmpty()) {
-            System.out.println("Error in BuildExpressionTree.");
-        }
-
-        // // These are for testing if the expression tree's print function works correctly. Uncomment to test.
-        //myExpressionTree.printTree();
-        //System.out.println();
-
-    }
-
     /**
-     * Returns an expression tree from a given stack of Tokens.
-     * Runs recursively to create the entire tree.
-     * @param s The Stack of Tokens to build from
-     * @return An ExpressionTreeNode containing subtrees of the rest of the stack.
+     * Build this cell's ExpressionTree with a provided Stack of Tokens.
+     * @param theStack The Stack of Tokens to process.
      */
-    private ExpressionTreeNode getExpressionTree(Stack<Token> s) {
-        ExpressionTreeNode returnTree = null;
-        Token token;
-
-        if (s.isEmpty())
-            return null;
-
-        token = s.pop();  // need to handle stack underflow
-        if ((token instanceof LiteralToken) ||
-                (token instanceof CellToken) ) {
-
-            // Literals and Cells are leaves in the expression tree
-            returnTree = new ExpressionTreeNode(token, null, null);
-
-        } else if (token instanceof OperatorToken) {
-            // Continue finding tokens that will form the
-            // right subtree and left subtree.
-            ExpressionTreeNode rightSubtree = getExpressionTree (s);
-            ExpressionTreeNode leftSubtree  = getExpressionTree (s);
-            returnTree =
-                    new ExpressionTreeNode(token, leftSubtree, rightSubtree);
-        }
-
-        return returnTree;
+    public void buildExpressionTree (final Stack<Token> theStack) {
+        myExpressionTree.buildExpressionTree(theStack);
     }
 
     /**
      * Finds all cells that this cell depends on and returns them as a list of CellTokens.
+     * @return A List of CellTokens that this Cell depends on in its formula.
      */
     public List<CellToken> getDependencies() {
         List<CellToken> dependencies = new ArrayList<>();
         myExpressionTree.findDependencies(myExpressionTree.getRoot(), dependencies);
         return dependencies;
-    }
-
-    public String getFormula() {
-        // TODO: Printing out formulas that include parentheses causes issues. Need to fix!
-        return myFormula;
     }
 
 }

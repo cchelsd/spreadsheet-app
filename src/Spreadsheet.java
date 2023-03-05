@@ -14,8 +14,14 @@ public class Spreadsheet {
      */
     private final Cell[][] cells;
 
+    /**
+     * Constructs a spreadsheet object of a specified size, where sheetSize is the
+     * number of rows and columns in the sheet.
+     * @param sheetSize The amount of rows and columns in the spreadsheet.
+     */
     public Spreadsheet(final int sheetSize) {
         cells = new Cell[sheetSize][sheetSize];
+        // Iterate through the spreadsheet, instantiating each cell.
         for (int x = 0; x < sheetSize; x++) {
             for (int y = 0; y < sheetSize; y++) {
                 cells[x][y] = new Cell();
@@ -38,18 +44,19 @@ public class Spreadsheet {
     }
 
     /**
-     * Changes the given cellToken's Stack to the Stack provided, then recalculates its formula.
+     * Changes the given cellToken's formula to the String provided, then recalculates the spreadsheet.
      * @param cellToken The CellToken to change.
      * @param theFormula The formula for this Cell to have.
      */
     public void changeCellFormulaAndRecalculate(final CellToken cellToken, final String theFormula) {
         Stack<Token> expTreeTokenStack = getFormula(theFormula);
+        // We save a copy of the previous formula just in-case the new one causes an error.
         String previousFormula = getCell(cellToken).getFormula();
         // Update our cell with the new expression tree stack we were given.
         cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(expTreeTokenStack);
         getCell(cellToken).setFormula(theFormula);
 
-        Queue<CellToken> processStack = new LinkedList<>(); // Stores which cells to process, and in what order.
+        Queue<CellToken> processQueue = new LinkedList<>(); // Stores which cells to process, and in what order.
         ConcurrentHashMap<CellToken, List<CellToken>> cellDependencies = new ConcurrentHashMap<>(); // All dependencies of a given cell.
 
         for(int y = 0; y < getNumRows(); y++) {
@@ -61,6 +68,7 @@ public class Spreadsheet {
             }
         }
 
+        // Go through the cell dependencies, topologically sorting them into the process queue.
         while(!cellDependencies.isEmpty()) {
             boolean removedValue = false;
             for (CellToken t : cellDependencies.keySet()) {
@@ -68,7 +76,7 @@ public class Spreadsheet {
                 if (cellDependencies.get(t).isEmpty()) {
                     removedValue = true;
                     cellDependencies.remove(t);
-                    processStack.add(t);
+                    processQueue.add(t);
                     for (CellToken u : cellDependencies.keySet()) {
                         // If this cell has a dependent, it's removed. if not, then it won't.
                         cellDependencies.get(u).remove(t);
@@ -86,9 +94,9 @@ public class Spreadsheet {
 
         }
 
-        // Now iterate through the stack of cells.
-        while(!processStack.isEmpty()) {
-            CellToken cToken = processStack.remove();
+        // Now iterate through the queue of cells.
+        while(!processQueue.isEmpty()) {
+            CellToken cToken = processQueue.remove();
             getCell(cToken).evaluate(this);
         }
     }
@@ -121,7 +129,7 @@ public class Spreadsheet {
 
     /**
      * getCellToken
-     *
+     * <br>
      * Assuming that the next chars in a String (at the given startIndex)
      * is a cell reference, set cellToken's column and row to the
      * cell's column and row.
@@ -131,13 +139,13 @@ public class Spreadsheet {
      * the cell reference.
      * (Possible improvement: instead of returning a CellToken with row and
      * column equal to BadCell, throw an exception that indicates a parsing error.)
-     *
+     * <br>
      * A cell reference is defined to be a sequence of CAPITAL letters,
      * followed by a sequence of digits (0-9).  The letters refer to
      * columns as follows: A = 0, B = 1, C = 2, ..., Z = 25, AA = 26,
      * AB = 27, ..., AZ = 51, BA = 52, ..., ZA = 676, ..., ZZ = 701,
      * AAA = 702.  The digits represent the row number.
-     *
+     * <br>
      * @param inputString  the input string
      * @param startIndex  the index of the first char to process
      * @param cellToken  a cellToken (essentially a return value)
@@ -145,8 +153,8 @@ public class Spreadsheet {
      */
     int getCellToken (String inputString, int startIndex, CellToken cellToken) {
         char ch;
-        int column = 0;
-        int row = 0;
+        int column;
+        int row;
         int index = startIndex;
 
         // handle a bad startIndex
@@ -231,34 +239,32 @@ public class Spreadsheet {
 
     /**
      * getFormula
-     *
+     * <br>
      * Given a string that represents a formula that is an infix
      * expression, return a stack of Tokens so that the expression,
      * when read from the bottom of the stack to the top of the stack,
      * is a postfix expression.
-     *
+     * <br>
      * A formula is defined as a sequence of tokens that represents
      * a legal infix expression.
-     *
+     * <br>
      * A token can consist of a numeric literal, a cell reference, or an
      * operator (+, -, *, /).
-     *
+     * <br>
      * Multiplication (*) and division (/) have higher precedence than
      * addition (+) and subtraction (-).  Among operations within the same
      * level of precedence, grouping is from left to right.
-     *
+     * <br>
      * This algorithm follows the algorithm described in Weiss, pages 105-108.
      */
-    Stack getFormula(String formula) {
-        Stack returnStack = new Stack<Token>();  // stack of Tokens (representing a postfix expression)
+    Stack<Token> getFormula(String formula) {
+        Stack<Token> returnStack = new Stack<>();  // stack of Tokens (representing a postfix expression)
         boolean error = false;
         char ch = ' ';
 
-        int literalValue = 0;
+        int literalValue;
 
-        CellToken cellToken = new CellToken();
-        int column = 0;
-        int row = 0;
+        CellToken cellToken;
 
         int index = 0;  // index into formula
         Stack<Token> operatorStack = new Stack<>();  // stack of operators
@@ -386,7 +392,7 @@ public class Spreadsheet {
      */
     String printCellToken (CellToken cellToken) {
         char ch;
-        String returnString = "";
+        StringBuilder returnString = new StringBuilder();
         int col;
         int largest = 26;  // minimum col number with number_of_digits digits
         int number_of_digits = 2;
@@ -405,7 +411,7 @@ public class Spreadsheet {
         // append the column label, one character at a time
         while (number_of_digits > 1) {
             ch = (char)(((col / largest) - 1) + 'A');
-            returnString += ch;
+            returnString.append(ch);
             col = col % largest;
             largest = largest  / 26;
             number_of_digits--;
@@ -413,12 +419,12 @@ public class Spreadsheet {
 
         // handle last digit
         ch = (char)(col + 'A');
-        returnString += ch;
+        returnString.append(ch);
 
         // append the row as an integer
-        returnString += cellToken.getRow();
+        returnString.append(cellToken.getRow());
 
-        return returnString;
+        return returnString.toString();
     }
 
     /**
@@ -451,5 +457,17 @@ public class Spreadsheet {
      * Prints out ALL formulas inside this spreadsheet.
      */
     public void printAllFormulas() {
+        CellToken cellToken = new CellToken();
+        for(int y = 0; y < getNumRows(); y++) {
+            for(int x = 0; x < getNumColumns(); x++) {
+                cellToken.setRow(y);
+                cellToken.setColumn(x);
+                System.out.print(printCellToken(cellToken));
+                System.out.print(": ");
+                System.out.print(getCell(cellToken).getFormula());
+                System.out.print(" | ");
+            }
+            System.out.println();
+        }
     }
 }

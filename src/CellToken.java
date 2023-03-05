@@ -7,7 +7,9 @@
  */
 public class CellToken extends Token {
 
+    /** The column this token refers to. */
     private int myColumn;
+    /** The row this token refers to.m*/
     private int myRow;
 
     /**
@@ -30,7 +32,7 @@ public class CellToken extends Token {
     @Override
     public String toString() {
         char ch;
-        String returnString = "";
+        StringBuilder returnString = new StringBuilder();
         int col;
         int largest = 26;  // minimum col number with number_of_digits digits
         int number_of_digits = 2;
@@ -49,7 +51,7 @@ public class CellToken extends Token {
         // append the column label, one character at a time
         while (number_of_digits > 1) {
             ch = (char)(((col / largest) - 1) + 'A');
-            returnString += ch;
+            returnString.append(ch);
             col = col % largest;
             largest = largest  / 26;
             number_of_digits--;
@@ -57,18 +59,17 @@ public class CellToken extends Token {
 
         // handle last digit
         ch = (char)(col + 'A');
-        returnString += ch;
+        returnString.append(ch);
 
         // append the row as an integer
-        returnString += myRow;
+        returnString.append(myRow);
 
-        return returnString;
+        return returnString.toString();
     }
 
     @Override
     public boolean equals(Object theOther) {
-        if(theOther instanceof CellToken) {
-            CellToken otherToken = (CellToken)theOther;
+        if(theOther instanceof CellToken otherToken) {
             return otherToken.getColumn() == myColumn && otherToken.getRow() == myRow;
         }
         else return false;

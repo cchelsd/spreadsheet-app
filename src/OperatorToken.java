@@ -43,12 +43,11 @@ public class OperatorToken extends Token {
 
     /**
      * Given an operator, return its priority.
-     *
-     * priorities:
-     *   +, - : 0
-     *   *, / : 1
+     * <br>
+     * priorities: <br>
+     *   +, - : 0 <br>
+     *   *, / : 1 <br>
      *   (    : 2
-     *
      * @param ch  a char
      * @return  the priority of the operator
      */
@@ -59,53 +58,50 @@ public class OperatorToken extends Token {
             System.exit(0);
         }
         switch (ch) {
-            case Plus:
+            case Plus, Minus -> {
                 return 0;
-            case Minus:
-                return 0;
-            case Mult:
+            }
+            case Mult, Div -> {
                 return 1;
-            case Div:
-                return 1;
-            case LeftParen:
+            }
+            case LeftParen -> {
                 return 2;
-
-            default:
+            }
+            default -> {
                 // This case should NEVER happen
                 System.out.println("Error in operatorPriority.");
                 System.exit(0);
                 return 0; // Only here to prevent compile error.
+            }
         }
     }
 
-    /*
+    /**
      * Return the priority of this OperatorToken.
-     *
-     * priorities:
-     *   +, - : 0
-     *   *, / : 1
-     *   (    : 2
-     *
+     * <br>
+     * priorities: <br>
+     *   +, - : 0 <br>
+     *   *, / : 1 <br>
+     *   (    : 2 <br>
      * @return  the priority of operatorToken
      */
     int priority () {
         switch (this.myToken) {
-            case Plus:
+            case Plus, Minus -> {
                 return 0;
-            case Minus:
-                return 0;
-            case Mult:
+            }
+            case Mult, Div -> {
                 return 1;
-            case Div:
-                return 1;
-            case LeftParen:
+            }
+            case LeftParen -> {
                 return 2;
-
-            default:
+            }
+            default -> {
                 // This case should NEVER happen
                 System.out.println("Error in priority.");
                 System.exit(0);
                 return 0; // Only here to prevent compile error.
+            }
         }
     }
 

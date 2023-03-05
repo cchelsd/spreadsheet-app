@@ -45,7 +45,7 @@ public class GUI extends JFrame {
 
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
-                return Integer.toString(rowIndex + 1);
+                return Integer.toString(rowIndex);
             }
         });
         JViewport rowHeaderViewport = new JViewport();
@@ -53,6 +53,7 @@ public class GUI extends JFrame {
         myRowHeader.setPreferredScrollableViewportSize(new Dimension(30,0));
         myScrollPane.setRowHeader(rowHeaderViewport);
     }
+
     public void start() {
         setUpComponents();
         pack();
@@ -85,9 +86,9 @@ public class GUI extends JFrame {
     }
 
     public void updateAllCells() {
+        CellToken cellToken = new CellToken();
         for(int x = 0; x < mySheet.getNumColumns(); x++) {
             for(int y = 0; y < mySheet.getNumRows(); y++) {
-                CellToken cellToken = new CellToken();
                 cellToken.setRow(y);
                 cellToken.setColumn(x);
                 myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
