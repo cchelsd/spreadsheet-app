@@ -10,6 +10,7 @@ public class OperatorToken extends Token {
     public static final char Minus = '-';
     public static final char Mult = '*';
     public static final char Div = '/';
+    public static final char Pow = '^';
     public static final char LeftParen = '(';
     public static final char RightParen = ')';
 
@@ -37,6 +38,7 @@ public class OperatorToken extends Token {
                 || theChar == OperatorToken.Minus
                 || theChar == OperatorToken.Mult
                 || theChar == OperatorToken.Div
+                || theChar == OperatorToken.Pow
                 || theChar == OperatorToken.LeftParen
                 || theChar == OperatorToken.RightParen;
     }
@@ -47,7 +49,8 @@ public class OperatorToken extends Token {
      * priorities: <br>
      *   +, - : 0 <br>
      *   *, / : 1 <br>
-     *   (    : 2
+     *   ^    : 2 <br>
+     *   (    : 3
      * @param ch  a char
      * @return  the priority of the operator
      */
@@ -64,8 +67,11 @@ public class OperatorToken extends Token {
             case Mult, Div -> {
                 return 1;
             }
-            case LeftParen -> {
+            case Pow -> {
                 return 2;
+            }
+            case LeftParen -> {
+                return 3;
             }
             default -> {
                 // This case should NEVER happen
@@ -82,7 +88,8 @@ public class OperatorToken extends Token {
      * priorities: <br>
      *   +, - : 0 <br>
      *   *, / : 1 <br>
-     *   (    : 2 <br>
+     *   ^    : 2 <br>
+     *   (    : 3 <br>
      * @return  the priority of operatorToken
      */
     int priority () {
@@ -93,12 +100,16 @@ public class OperatorToken extends Token {
             case Mult, Div -> {
                 return 1;
             }
-            case LeftParen -> {
+            case Pow -> {
                 return 2;
+            }
+            case LeftParen -> {
+                return 3;
             }
             default -> {
                 // This case should NEVER happen
                 System.out.println("Error in priority.");
+                System.out.println(this.myToken);
                 System.exit(0);
                 return 0; // Only here to prevent compile error.
             }

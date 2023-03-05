@@ -119,6 +119,12 @@ public class ExpressionTree {
                 case OperatorToken.Div -> {
                     return leftValue / rightValue;
                 }
+                case OperatorToken.Pow -> {
+                    return (int)Math.pow(leftValue, rightValue);
+                }
+                case OperatorToken.LeftParen -> {
+                    return rightValue;
+                }
             }
         }
         // If the token is a literal, just return the literal's value

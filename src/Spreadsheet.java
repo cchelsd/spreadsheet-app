@@ -292,6 +292,7 @@ public class Spreadsheet {
                     case OperatorToken.Minus:
                     case OperatorToken.Mult:
                     case OperatorToken.Div:
+                    case OperatorToken.Pow:
                     case OperatorToken.LeftParen:
                         // push operatorTokens onto the output stack until
                         // we reach an operator on the operator stack that has
@@ -309,6 +310,7 @@ public class Spreadsheet {
                                 break;
                             }
                         }
+
                         break;
                     case OperatorToken.RightParen:
                         stackOperator = (OperatorToken) operatorStack.pop();
@@ -328,6 +330,7 @@ public class Spreadsheet {
                         System.exit(0);
                         break;
                 }
+
                 // push the operator on the operator stack
                 operatorStack.push(new OperatorToken(ch));
 
