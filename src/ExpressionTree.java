@@ -36,7 +36,7 @@ public class ExpressionTree {
             return null;
 
         token = s.pop();  // need to handle stack underflow
-        System.out.print(token.toString());
+        //System.out.print(token.toString());
         if ((token instanceof LiteralToken) ||
                 (token instanceof CellToken) ) {
 

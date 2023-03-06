@@ -86,9 +86,12 @@ public class Spreadsheet {
             // If we didn't remove anything during a loop, a cycle has been found.
             if (!removedValue) {
                 System.out.println("Cycle found");
-                //changeCellFormulaAndRecalculate(cellToken, previousFormula);
-                // Run this entire method but with this cell's original formula.
-                changeCellFormulaAndRecalculate(cellToken, previousFormula);
+                // Since we know the graph originally worked before we changed a cell,
+                // we revert the change and then break.
+                Stack<Token> prevExpTreeTokenStack = getFormula(previousFormula);
+                // Update our cell with the new expression tree stack we were given.
+                cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(prevExpTreeTokenStack);
+                getCell(cellToken).setFormula(previousFormula);
                 break;
             }
 
