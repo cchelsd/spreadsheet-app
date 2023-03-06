@@ -69,7 +69,8 @@ public class CellToken extends Token {
 
     @Override
     public boolean equals(Object theOther) {
-        if(theOther instanceof CellToken otherToken) {
+        if(theOther instanceof CellToken) {
+            CellToken otherToken = (CellToken)theOther;
             return otherToken.getColumn() == myColumn && otherToken.getRow() == myRow;
         }
         else return false;
