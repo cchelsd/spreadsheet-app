@@ -91,7 +91,9 @@ public class GUI extends JFrame {
             for(int y = 0; y < mySheet.getNumRows(); y++) {
                 cellToken.setRow(y);
                 cellToken.setColumn(x);
-                myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
+                // Only print a value in this cell if it actually has a formula in it.
+                if(mySheet.getCell(cellToken).getFormula().compareTo("") != 0)
+                    myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
             }
         }
     }
