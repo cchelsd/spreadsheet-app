@@ -59,7 +59,7 @@ public class Cell {
      */
     public void buildExpressionTree (final Stack<Token> theStack) {
         myExpressionTree.buildExpressionTree(theStack);
-        myExpressionTree.printTree();
+        //myExpressionTree.printTree();
         System.out.println();
     }
 

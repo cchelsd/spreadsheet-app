@@ -36,6 +36,7 @@ public class ExpressionTree {
             return null;
 
         token = s.pop();  // need to handle stack underflow
+        System.out.print(token.toString());
         if ((token instanceof LiteralToken) ||
                 (token instanceof CellToken) ) {
 
@@ -70,9 +71,10 @@ public class ExpressionTree {
         if(theNode == null) return;
 
         // Prints in infix notation.
-        printTreeNode(theNode.getLeft());
         theNode.printToken();
+        printTreeNode(theNode.getLeft());
         printTreeNode(theNode.getRight());
+
     }
 
     /**
@@ -103,36 +105,33 @@ public class ExpressionTree {
         Token nodeToken = theNode.getToken();
 
         // If this is an operator token, then process it's left and right subtrees before processing itself.
-        if (nodeToken instanceof OperatorToken operatorToken) {
+        if (nodeToken instanceof OperatorToken) {
+            OperatorToken operatorToken = (OperatorToken)nodeToken;
             int leftValue = evaluate(theNode.getLeft(), theSpreadsheet);
             int rightValue = evaluate(theNode.getRight(), theSpreadsheet);
             switch (operatorToken.getToken()) {
-                case OperatorToken.Plus -> {
+                case OperatorToken.Plus :
                     return leftValue + rightValue;
-                }
-                case OperatorToken.Minus -> {
+                case OperatorToken.Minus:
                     return leftValue - rightValue;
-                }
-                case OperatorToken.Mult -> {
+                case OperatorToken.Mult:
                     return leftValue * rightValue;
-                }
-                case OperatorToken.Div -> {
+                case OperatorToken.Div:
                     return leftValue / rightValue;
-                }
-                case OperatorToken.Pow -> {
+                case OperatorToken.Pow:
                     return (int)Math.pow(leftValue, rightValue);
-                }
-                case OperatorToken.LeftParen -> {
+                case OperatorToken.LeftParen:
                     return rightValue;
-                }
             }
         }
         // If the token is a literal, just return the literal's value
-        else if (nodeToken instanceof LiteralToken literalToken) {
+        else if (nodeToken instanceof LiteralToken) {
+            LiteralToken literalToken = (LiteralToken)nodeToken;
             return literalToken.getValue();
         }
         // If the token is a cellToken, return the value in that cell.
-        else if (nodeToken instanceof CellToken cellToken) {
+        else if (nodeToken instanceof CellToken) {
+            CellToken cellToken = (CellToken)nodeToken;
             return theSpreadsheet.evaluateCell(cellToken);
         }
 

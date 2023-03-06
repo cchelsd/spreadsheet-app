@@ -311,6 +311,9 @@ public class Spreadsheet {
                             }
                         }
 
+                        // push the operator on the operator stack
+                        operatorStack.push(new OperatorToken(ch));
+                        index++;
                         break;
                     case OperatorToken.RightParen:
                         stackOperator = (OperatorToken) operatorStack.pop();
@@ -330,11 +333,6 @@ public class Spreadsheet {
                         System.exit(0);
                         break;
                 }
-
-                // push the operator on the operator stack
-                operatorStack.push(new OperatorToken(ch));
-
-                index++;
 
             } else if (Character.isDigit(ch)) {
                 // We found a literal token

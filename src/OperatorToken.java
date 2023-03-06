@@ -61,24 +61,22 @@ public class OperatorToken extends Token {
             System.exit(0);
         }
         switch (ch) {
-            case Plus, Minus -> {
+            case Plus:
+            case Minus:
                 return 0;
-            }
-            case Mult, Div -> {
+            case Mult:
+            case Div:
                 return 1;
-            }
-            case Pow -> {
+            case Pow:
                 return 2;
-            }
-            case LeftParen -> {
+            case LeftParen:
                 return 3;
-            }
-            default -> {
+            default:
                 // This case should NEVER happen
                 System.out.println("Error in operatorPriority.");
                 System.exit(0);
                 return 0; // Only here to prevent compile error.
-            }
+
         }
     }
 
@@ -94,27 +92,22 @@ public class OperatorToken extends Token {
      */
     int priority () {
         switch (this.myToken) {
-            case Plus, Minus -> {
+            case Plus:
+            case Minus:
                 return 0;
-            }
-            case Mult, Div -> {
+            case Mult:
+            case Div:
                 return 1;
-            }
-            case Pow -> {
+            case Pow:
                 return 2;
-            }
-            case LeftParen -> {
+            case LeftParen:
                 return 3;
-            }
-            default -> {
+            default:
                 // This case should NEVER happen
                 System.out.println("Error in priority.");
                 System.out.println(this.myToken);
                 System.exit(0);
                 return 0; // Only here to prevent compile error.
-            }
         }
     }
-
-
 }
