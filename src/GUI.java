@@ -114,9 +114,7 @@ public class GUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = myTable.getSelectedRow();
                 int col = myTable.getSelectedColumn();
-                CellToken curr = new CellToken();
-                curr.setRow(row);
-                curr.setColumn(col);
+                CellToken curr = new CellToken(col, row);
                 Cell cell = mySheet.getCell(curr);
                 myInputBar.setText(cell.getFormula());
 

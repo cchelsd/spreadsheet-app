@@ -19,6 +19,14 @@ public class CellToken extends Token {
 
     }
 
+    /**
+     * Creates a new CellToken with the row and column set
+     */
+    public CellToken(int theColumn, int theRow) {
+        myColumn = theColumn;
+        myRow = theRow;
+    }
+
     public int getColumn() {
         return myColumn;
     }
@@ -70,7 +78,7 @@ public class CellToken extends Token {
     @Override
     public boolean equals(Object theOther) {
         if(theOther instanceof CellToken) {
-            CellToken otherToken = (CellToken)theOther;
+            CellToken otherToken = (CellToken) theOther;
             return otherToken.getColumn() == myColumn && otherToken.getRow() == myRow;
         }
         else return false;
