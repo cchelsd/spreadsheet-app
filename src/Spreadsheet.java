@@ -62,7 +62,7 @@ public class Spreadsheet {
      * @param cellToken The CellToken to change.
      * @param theFormula The formula for this Cell to have.
      */
-    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final String theFormula) {
+    public void changeCellFormulaAndRecalculate(final CellToken cellToken, final String theFormula) throws IllegalArgumentException {
         Stack<Token> expTreeTokenStack = getFormula(theFormula);
         // We save a copy of the previous formula just in-case the new one causes an error.
         String previousFormula = getCell(cellToken).getFormula();
@@ -106,7 +106,7 @@ public class Spreadsheet {
                 // Update our cell with the new expression tree stack we were given.
                 cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(prevExpTreeTokenStack);
                 getCell(cellToken).setFormula(previousFormula);
-                break;
+                throw new IllegalArgumentException();
             }
 
         }
