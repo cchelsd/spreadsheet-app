@@ -1,37 +1,54 @@
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
+import javax.swing.event.*;
+import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.io.*;
 
 public class GUI extends JFrame {
     private final JTable myTable;
     private JTable myRowHeader;
-    private final TableModel myModel;
-    private final Spreadsheet mySheet;
+    private Spreadsheet mySheet;
     private final JScrollPane myScrollPane;
     private JTextField myInputBar;
     private final JTableHeader myHeader;
-    private Object[][] data;
-    private int activeRow, activeCol;
+
     public GUI() {
-        mySheet = new Spreadsheet(20);
-        data = new Object[mySheet.getNumRows()][mySheet.getNumColumns()];
-        myModel = new DefaultTableModel(mySheet.getNumRows(), mySheet.getNumColumns());
+        createSheet();
+        TableModel myModel = new DefaultTableModel(mySheet.getNumRows(), mySheet.getNumColumns());
         myTable = new JTable(myModel);
         myScrollPane = new JScrollPane(myTable);
         myHeader = myTable.getTableHeader();
     }
-
     public static void main(String[] args) {
         new GUI().start();
     }
-
+    public void createSheet() {
+        boolean validInput = false;
+        while (!validInput) {
+            JTextField rowInput = new JTextField();
+            JTextField colInput = new JTextField();
+            int input = JOptionPane.showConfirmDialog(this, new Object[]{"Number of Rows:", rowInput,
+                    "Number of Columns:", colInput}, "Enter spreadsheet size", JOptionPane.OK_CANCEL_OPTION);
+            if (input == JOptionPane.OK_OPTION) {
+                try {
+                    int numRows = Integer.parseInt(rowInput.getText().trim());
+                    int numCols = Integer.parseInt(colInput.getText().trim());
+                    if (numRows > 0 && numCols > 0) {
+                        mySheet = new Spreadsheet(numRows, numCols);
+                        validInput = true;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Invalid input. Please enter positive integers.");
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input. Please enter positive integers.");
+                }
+            } else {
+                System.exit(0);
+            }
+        }
+    }
     public void createRowHeader() {
         myRowHeader = new JTable(new AbstractTableModel() {
             @Override
@@ -42,7 +59,6 @@ public class GUI extends JFrame {
             public int getColumnCount() {
                 return 1;
             }
-
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 return Integer.toString(rowIndex);
@@ -51,6 +67,9 @@ public class GUI extends JFrame {
         JViewport rowHeaderViewport = new JViewport();
         rowHeaderViewport.setView(myRowHeader);
         myRowHeader.setPreferredScrollableViewportSize(new Dimension(30,0));
+        myRowHeader.setGridColor(new Color(212, 212, 212));
+        myRowHeader.setOpaque(true);
+        myRowHeader.setBackground(new Color(248, 248, 248));
         myScrollPane.setRowHeader(rowHeaderViewport);
     }
 
@@ -80,7 +99,6 @@ public class GUI extends JFrame {
             }
             mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             updateAllCells();
-            //myTable.setValueAt(formula, row, col);
         });
         add(myInputBar, BorderLayout.NORTH);
     }
@@ -99,45 +117,34 @@ public class GUI extends JFrame {
     }
 
     public void setUpComponents() {
-        myTable.setGridColor(Color.BLACK);
+        myTable.setGridColor(new Color(212, 212, 212));
         myTable.setShowGrid(true);
         myTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         myTable.setCellSelectionEnabled(true);
         myTable.getModel().addTableModelListener(new SpreadsheetListener());
         myTable.setDefaultEditor(Object.class, null);
-        myHeader.setBackground(Color.LIGHT_GRAY);
-        createRowHeader();
-        add(myScrollPane);
-        createInputBar();
-        myTable.addMouseListener(new MouseListener() {
+        myTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                myRowHeader.clearSelection();
+                myInputBar.requestFocus(); // sets focus to text field
                 int row = myTable.getSelectedRow();
                 int col = myTable.getSelectedColumn();
                 CellToken curr = new CellToken(col, row);
                 Cell cell = mySheet.getCell(curr);
                 myInputBar.setText(cell.getFormula());
-
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
+                //sets cursor position after setting text to prevent highlighting of text in input bar
+                SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
             }
         });
+        myHeader.setBackground(new Color(250, 250, 250));
+        createInputBar();
+        int height = myTable.getRowHeight() * myTable.getRowCount();
+        int width = myTable.getColumnModel().getTotalColumnWidth();
+        myScrollPane.setPreferredSize(new Dimension(width, height + 35));
+        createRowHeader();
+        add(myScrollPane);
     }
 
     public class SpreadsheetListener implements TableModelListener {

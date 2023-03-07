@@ -1,3 +1,8 @@
+import javax.swing.*;
+import javax.swing.table.TableModel;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +29,15 @@ public class Spreadsheet {
         // Iterate through the spreadsheet, instantiating each cell.
         for (int x = 0; x < sheetSize; x++) {
             for (int y = 0; y < sheetSize; y++) {
+                cells[x][y] = new Cell();
+            }
+        }
+    }
+
+    public Spreadsheet(final int rows, final int cols) {
+        cells = new Cell[rows][cols];
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
                 cells[x][y] = new Cell();
             }
         }
@@ -474,4 +488,33 @@ public class Spreadsheet {
             System.out.println();
         }
     }
+
+//    public void saveToFile(TableModel model, File file) {
+//        try {
+//            FileWriter writer = new FileWriter(file);
+//            for (int i = 0; i < model.getColumnCount(); i++) {
+//                writer.write(model.getColumnName(i));
+//                if (i != model.getColumnCount() - 1) {
+//                    writer.write("\t");
+//                }
+//                writer.write("\n");
+//            }
+//            for (int i = 0; i < model.getRowCount(); i++) {
+//                for (int j = 0; j < model.getColumnCount(); j++) {
+//                    Object value = model.getValueAt(i, j);
+//                    if (value != null) {
+//                        writer.write(value.toString());
+//                    } else {
+//                        writer.write("");
+//                    }
+//                    if (j < model.getColumnCount() - 1) {
+//                        writer.write("\t");
+//                    }
+//                }
+//                writer.write("\n");
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
