@@ -105,10 +105,13 @@ public class Spreadsheet {
                 Stack<Token> prevExpTreeTokenStack = getFormula(previousFormula);
                 // Update our cell with the original expression tree.
                 cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(prevExpTreeTokenStack);
-                getCell(cellToken).setFormula(previousFormula);
+                if (!previousFormula.isEmpty()) {
+                    getCell(cellToken).setFormula(previousFormula);
+                } else {
+                    getCell(cellToken).setFormula("0");
+                }
                 throw new IllegalArgumentException();
             }
-
         }
 
         // Now iterate through the queue of cells.

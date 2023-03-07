@@ -14,6 +14,10 @@ public class GUI extends JFrame {
     private JTextField myInputBar;
     private final JTableHeader myHeader;
 
+    /**
+     * A constructor for the GUI that creates a new spreadsheet and initializes
+     * GUI components.
+     */
     public GUI() {
         createSheet();
         TableModel myModel = new DefaultTableModel(mySheet.getNumRows(), mySheet.getNumColumns());
@@ -21,9 +25,19 @@ public class GUI extends JFrame {
         myScrollPane = new JScrollPane(myTable);
         myHeader = myTable.getTableHeader();
     }
+
+    /**
+     * Runs the program.
+     * @param args
+     */
     public static void main(String[] args) {
         new GUI().start();
     }
+
+    /**
+     * Prompts the user to input the desired number of rows and columns for their spreadsheet.
+     * Then creates the table for the spreadsheet.
+     */
     public void createSheet() {
         boolean validInput = false;
         while (!validInput) {
