@@ -103,7 +103,7 @@ public class Spreadsheet {
                 // Since we know the graph originally worked before we changed a cell,
                 // we revert the change and then break.
                 Stack<Token> prevExpTreeTokenStack = getFormula(previousFormula);
-                // Update our cell with the new expression tree stack we were given.
+                // Update our cell with the original expression tree.
                 cells[cellToken.getRow()][cellToken.getColumn()].buildExpressionTree(prevExpTreeTokenStack);
                 getCell(cellToken).setFormula(previousFormula);
                 throw new IllegalArgumentException();
