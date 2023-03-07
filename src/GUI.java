@@ -96,6 +96,11 @@ public class GUI extends JFrame {
                 mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             } catch (ArrayIndexOutOfBoundsException a) {
                 JOptionPane.showMessageDialog(this, "Please select a cell.");
+            } catch (IllegalArgumentException illegalArgumentException) {
+                JOptionPane.showMessageDialog(this, "There are one or more circular\n" +
+                        "references where a formula\n" +
+                        "refers to its own cell either\n" +
+                        "directly or indirectly.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
             }
             mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             updateAllCells();
@@ -110,8 +115,9 @@ public class GUI extends JFrame {
                 cellToken.setRow(y);
                 cellToken.setColumn(x);
                 // Only print a value in this cell if it actually has a formula in it.
-                if(mySheet.getCell(cellToken).getFormula().compareTo("") != 0)
+                if(mySheet.getCell(cellToken).getFormula().compareTo("") != 0) {
                     myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
+                }
             }
         }
     }
@@ -135,6 +141,7 @@ public class GUI extends JFrame {
                 Cell cell = mySheet.getCell(curr);
                 myInputBar.setText(cell.getFormula());
                 //sets cursor position after setting text to prevent highlighting of text in input bar
+                myInputBar.selectAll();
                 SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
             }
         });
