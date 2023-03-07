@@ -86,7 +86,9 @@ public class ExpressionTree {
         // If this node is null, just exit now.
         if(theNode == null) return;
         // If this node is a CellToken, then add it to the list.
-        if(theNode.getToken() instanceof CellToken) theList.add((CellToken)theNode.getToken());
+        if(theNode.getToken() instanceof CellToken && !theList.contains((CellToken) theNode.getToken())) {
+            theList.add((CellToken) theNode.getToken());
+        }
         // Recursively follow left and right children.
         findDependencies(theNode.getLeft(), theList);
         findDependencies(theNode.getRight(), theList);

@@ -16,7 +16,6 @@ public class CellToken extends Token {
      * Creates a new CellToken
      */
     public CellToken() {
-
     }
 
     /**
