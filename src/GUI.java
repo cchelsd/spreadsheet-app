@@ -138,7 +138,7 @@ public class GUI extends JFrame {
                 SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
             }
         });
-        myHeader.setBackground(new Color(248, 248, 248));
+        myHeader.setBackground(new Color(250, 250, 250));
         createInputBar();
         int height = myTable.getRowHeight() * myTable.getRowCount();
         int width = myTable.getColumnModel().getTotalColumnWidth();

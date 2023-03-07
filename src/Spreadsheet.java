@@ -36,7 +36,6 @@ public class Spreadsheet {
 
     public Spreadsheet(final int rows, final int cols) {
         cells = new Cell[rows][cols];
-        // Iterate through the spreadsheet, instantiating each cell.
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
                 cells[x][y] = new Cell();
