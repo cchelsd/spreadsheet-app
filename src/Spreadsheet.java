@@ -333,13 +333,17 @@ public class Spreadsheet {
                         index++;
                         break;
                     case OperatorToken.RightParen:
-                        stackOperator = (OperatorToken) operatorStack.pop();
-                        // This code does not handle operatorStack underflow.
-                        while (stackOperator.getToken() != OperatorToken.LeftParen) {
-                            // pop operators off the stack until a LeftParen appears and
-                            // place the operators on the output stack
-                            returnStack.push(stackOperator);
+                        if(!operatorStack.isEmpty()) {
                             stackOperator = (OperatorToken) operatorStack.pop();
+                            // This code does not handle operatorStack underflow.
+                            while (stackOperator.getToken() != OperatorToken.LeftParen) {
+                                // pop operators off the stack until a LeftParen appears and
+                                // place the operators on the output stack
+                                returnStack.push(stackOperator);
+                                if (!operatorStack.isEmpty())
+                                    stackOperator = (OperatorToken) operatorStack.pop();
+                                else break;
+                            }
                         }
 
                         index++;
