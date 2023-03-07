@@ -102,7 +102,6 @@ public class GUI extends JFrame {
                         "refers to its own cell either\n" +
                         "directly or indirectly.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
             }
-            mySheet.changeCellFormulaAndRecalculate(cellToken, formula);
             updateAllCells();
         });
         add(myInputBar, BorderLayout.NORTH);
@@ -141,8 +140,8 @@ public class GUI extends JFrame {
                 Cell cell = mySheet.getCell(curr);
                 myInputBar.setText(cell.getFormula());
                 //sets cursor position after setting text to prevent highlighting of text in input bar
-                myInputBar.selectAll();
-                SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
+//                myInputBar.selectAll();
+//                SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
             }
         });
         myHeader.setBackground(new Color(250, 250, 250));
