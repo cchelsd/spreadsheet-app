@@ -156,20 +156,42 @@ public class ExpressionTree {
         private final ExpressionTreeNode left;
         private final ExpressionTreeNode right;
 
+        /**
+         * Creates a node for the expression tree.
+         *
+         * @param theToken A token that is either a literal, an operator, or a cell.
+         * @param theLeft The left child node.
+         * @param theRight The right child node.
+         */
         public ExpressionTreeNode(final Token theToken, final ExpressionTreeNode theLeft, final ExpressionTreeNode theRight) {
             token = theToken;
             left = theLeft;
             right = theRight;
         }
 
+        /**
+         * Prints the token as a string.
+         */
         public void printToken() {
             System.out.print(token.toString());
         }
 
+        /**
+         * gets the token.
+         * @return the node that we need to get.
+         */
         public Token getToken() { return token; }
 
+        /**
+         * gets the left node.
+         * @return the left node that we need to get.
+         */
         public ExpressionTreeNode getLeft() { return left; }
 
+        /**
+         * gets the right node.
+         * @return the right node that we need to get.
+         */
         public ExpressionTreeNode getRight() { return right; }
     }
 }

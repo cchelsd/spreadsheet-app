@@ -26,14 +26,32 @@ public class CellToken extends Token {
         myRow = theRow;
     }
 
+    /**
+     * Gets the column the cell refers to.
+     * @return An integer representing the column.
+     */
     public int getColumn() {
         return myColumn;
     }
+
+    /**
+     * Sets the column the cell refers to.
+     * @param theColumn the column number the cell refers to.
+     */
     public void setColumn(final int theColumn) { myColumn = theColumn; }
 
+    /**
+     * Gets the row the cell refers to.
+     * @return An integer representing the column.
+     */
     public int getRow() {
         return myRow;
     }
+
+    /**
+     * Sets the row the cell refers to.
+     * @param theRow the row number the cell refers to.
+     */
     public void setRow(final int theRow) { myRow = theRow; }
 
     @Override
