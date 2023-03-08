@@ -22,18 +22,9 @@ public class Spreadsheet {
     /**
      * Constructs a spreadsheet object of a specified size, where sheetSize is the
      * number of rows and columns in the sheet.
-     * @param sheetSize The amount of rows and columns in the spreadsheet.
+     * @param rows The amount of rows in the spreadsheet.
+     * @param cols The amount of columns in the spreadsheet
      */
-    public Spreadsheet(final int sheetSize) {
-        cells = new Cell[sheetSize][sheetSize];
-        // Iterate through the spreadsheet, instantiating each cell.
-        for (int x = 0; x < sheetSize; x++) {
-            for (int y = 0; y < sheetSize; y++) {
-                cells[x][y] = new Cell();
-            }
-        }
-    }
-
     public Spreadsheet(final int rows, final int cols) {
         cells = new Cell[rows][cols];
         for (int x = 0; x < rows; x++) {
@@ -495,33 +486,4 @@ public class Spreadsheet {
             System.out.println();
         }
     }
-
-//    public void saveToFile(TableModel model, File file) {
-//        try {
-//            FileWriter writer = new FileWriter(file);
-//            for (int i = 0; i < model.getColumnCount(); i++) {
-//                writer.write(model.getColumnName(i));
-//                if (i != model.getColumnCount() - 1) {
-//                    writer.write("\t");
-//                }
-//                writer.write("\n");
-//            }
-//            for (int i = 0; i < model.getRowCount(); i++) {
-//                for (int j = 0; j < model.getColumnCount(); j++) {
-//                    Object value = model.getValueAt(i, j);
-//                    if (value != null) {
-//                        writer.write(value.toString());
-//                    } else {
-//                        writer.write("");
-//                    }
-//                    if (j < model.getColumnCount() - 1) {
-//                        writer.write("\t");
-//                    }
-//                }
-//                writer.write("\n");
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
