@@ -106,10 +106,8 @@ public class GUI extends JFrame {
             } catch (ArrayIndexOutOfBoundsException a) {
                 JOptionPane.showMessageDialog(this, "Please select a cell.");
             } catch (IllegalArgumentException illegalArgumentException) {
-                JOptionPane.showMessageDialog(this, "There are one or more circular\n" +
-                        "references where a formula\n" +
-                        "refers to its own cell either\n" +
-                        "directly or indirectly.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "You have either entered a formula that refers to it own cell " +
+                                "\nor referenced a cell not in the table.", "Invalid formula", JOptionPane.ERROR_MESSAGE);
             }
             updateAllCells();
         });
