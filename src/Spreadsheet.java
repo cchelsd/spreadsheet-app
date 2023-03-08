@@ -489,14 +489,14 @@ public class Spreadsheet {
 
     /**
      * Saves the current spreadsheet as a file.
-     * @param theFilePath
-     * @param mainTable
-     * @param headerTable
-     * @throws IOException
+     * @param theFilePath the path of the file
+     * @param mainTable the spreadsheet table
+     * @param headerTable the row header table
      */
     public void saveToFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
         FileWriter writer = new FileWriter(theFilePath);
 
+        // writes the column header
         writer.write("\t");
         JTableHeader header = mainTable.getTableHeader();
         for (int i = 0; i < header.getColumnModel().getColumnCount(); i++) {
@@ -504,13 +504,14 @@ public class Spreadsheet {
         }
         writer.write("\n");
 
+
         for (int i = 0; i < cells.length; i++) {
-            writer.write(headerTable.getValueAt(i, 0).toString() + "\t");
+            writer.write(headerTable.getValueAt(i, 0).toString() + "\t"); // writes the row header
             for (int j = 0; j < cells[i].length; j++) {
                 Cell cell = cells[i][j];
                 String formula = cell.getFormula();
                 if (formula != null) {
-                    writer.write(formula);
+                    writer.write(formula); // writes the values in the table
                 }
                 writer.write("\t");
             }
@@ -520,30 +521,29 @@ public class Spreadsheet {
     }
 
     /**
-     * Opens a file chooser window that defaults to the current directory.
-     * @param theFilePath
-     * @param mainTable
-     * @param headerTable
-     * @throws IOException
+     * Read the spreadsheet values from a file and loads it into the current table.
+     * @param file the file to read
+     * @param mainTable the spreadsheet table
+     * @param headerTable the row header table
      */
-    public void readFromFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
-        FileReader reader = new FileReader(theFilePath);
+    public void readFromFile(String file, JTable mainTable, JTable headerTable) throws IOException {
+        FileReader reader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(reader);
         String line;
 
-        // read the header row
         line = bufferedReader.readLine();
         String[] headerColumns = line.split("\t");
 
         int row = 0;
         while ((line = bufferedReader.readLine()) != null) {
             String[] columns = line.split("\t");
+            // checks size of table in file
             if (headerColumns.length - 1 > mainTable.getColumnCount() || headerColumns.length - 1 < mainTable.getColumnCount()
                     || columns.length - 1 > mainTable.getColumnCount() || row >= mainTable.getRowCount()) {
                 bufferedReader.close();
                 throw new IllegalArgumentException("File differs in size from the current table.");
             }
-            headerTable.setValueAt(columns[0], row, 0);
+            // reads the values in the file and loads it into current table
             for (int i = 1; i < columns.length; i++) {
                 mainTable.setValueAt(columns[i], row, i-1);
                 CellToken curr = new CellToken(i-1, row);
@@ -552,6 +552,5 @@ public class Spreadsheet {
             row++;
         }
         bufferedReader.close();
-
     }
 }

@@ -124,6 +124,8 @@ public class GUI extends JFrame {
         myMenuBar = new JMenuBar();
         JMenu file = new JMenu("File");
         JMenu edit = new JMenu("Edit");
+
+        // create "Clear" item
         JMenuItem clear  = new JMenuItem("Clear");
         clear.addActionListener(e -> {
             for (int row = 0; row < myTable.getRowCount(); row++) {
@@ -135,9 +137,11 @@ public class GUI extends JFrame {
             updateAllCells();
         });
 
+        // create "New" item
         JMenuItem newSpreadsheet = new JMenuItem("New");
         newSpreadsheet.addActionListener(e -> new GUI().start());
 
+        // create "Save" item
         JMenuItem save = new JMenuItem("Save");
         save.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
@@ -152,6 +156,8 @@ public class GUI extends JFrame {
                 }
             }
         });
+
+        // Create "Open..." item (load spreadsheet from file)
         JMenuItem open = new JMenuItem("Open...");
         open.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
