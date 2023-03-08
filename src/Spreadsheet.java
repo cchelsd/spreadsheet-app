@@ -531,7 +531,6 @@ public class Spreadsheet {
         String line;
 
         line = bufferedReader.readLine();
-        String[] headerColumns = line.split("\t");
 
         int row = 0;
         while ((line = bufferedReader.readLine()) != null) {
