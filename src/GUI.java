@@ -28,7 +28,7 @@ public class GUI extends JFrame {
 
     /**
      * Runs the program.
-     * @param args
+     * @param args command line arguments.
      */
     public static void main(String[] args) {
         new GUI().start();
@@ -63,6 +63,10 @@ public class GUI extends JFrame {
             }
         }
     }
+
+    /**
+     * Creates a header for each row.
+     */
     public void createRowHeader() {
         myRowHeader = new JTable(new AbstractTableModel() {
             @Override
@@ -87,6 +91,9 @@ public class GUI extends JFrame {
         myScrollPane.setRowHeader(rowHeaderViewport);
     }
 
+    /**
+     * Starts running the GUI.
+     */
     public void start() {
         setUpComponents();
         pack();
@@ -97,6 +104,9 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Creates the input bar/text field where formulas are input.
+     */
     public void createInputBar() {
         myInputBar = new JTextField();
         myInputBar.addActionListener(e -> {
@@ -121,6 +131,9 @@ public class GUI extends JFrame {
         add(myInputBar, BorderLayout.NORTH);
     }
 
+    /**
+     * Updates all the cells displayed values
+     */
     public void updateAllCells() {
         CellToken cellToken = new CellToken();
         for(int x = 0; x < mySheet.getNumColumns(); x++) {
@@ -135,6 +148,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Sets the components used in the GUI and adds a mouse clicked listener.
+     */
     public void setUpComponents() {
         myTable.setGridColor(new Color(212, 212, 212));
         myTable.setShowGrid(true);
