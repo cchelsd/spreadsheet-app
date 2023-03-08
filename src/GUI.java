@@ -121,9 +121,11 @@ public class GUI extends JFrame {
         clear.addActionListener(e -> {
             for (int row = 0; row < myTable.getRowCount(); row++) {
                 for (int col = 0; col < myTable.getColumnCount(); col++) {
-                    myTable.setValueAt(null, row, col);
+                    CellToken cellToken = new CellToken(col, row);
+                    mySheet.getCell(cellToken).setFormula("");
                 }
             }
+            updateAllCells();
         });
         JMenuItem save = new JMenuItem("Save");
         save.addActionListener(e -> {
@@ -170,10 +172,15 @@ public class GUI extends JFrame {
                 // Only print a value in this cell if it actually has a formula in it.
                 if(mySheet.getCell(cellToken).getFormula().compareTo("") != 0) {
                     myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
+                } else {
+                    myTable.setValueAt("", y, x);
                 }
             }
         }
     }
+
+
+
 
     /**
      * Sets up the components in this frame.
