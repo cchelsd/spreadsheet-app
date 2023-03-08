@@ -1,12 +1,9 @@
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -42,7 +39,7 @@ public class GUI extends JFrame {
 
     /**
      * Runs the program.
-     * @param args
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         new GUI().start();
@@ -78,6 +75,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Creates the row header for the table.
+     */
     public void createRowHeader() {
         myRowHeader = new JTable(new DefaultTableModel(mySheet.getNumRows(), 1) {
             @Override
@@ -92,6 +92,9 @@ public class GUI extends JFrame {
         myScrollPane.setRowHeaderView(myRowHeader);
     }
 
+    /**
+     * Creates an input bar (JTextField) where formulas/values are entered.
+     */
     public void createInputBar() {
         myInputBar = new JTextField();
         myInputBar.addActionListener(e -> {
@@ -114,6 +117,9 @@ public class GUI extends JFrame {
         add(myInputBar, BorderLayout.NORTH);
     }
 
+    /**
+     * Creates the menu bar and all the menu items.
+     */
     public void createMenu() {
         myMenuBar = new JMenuBar();
         JMenu file = new JMenu("File");
@@ -171,6 +177,9 @@ public class GUI extends JFrame {
         myMenuBar.add(edit);
     }
 
+    /**
+     * Updates all the cells' displayed values.
+     */
     public void updateAllCells() {
         for(int x = 0; x < mySheet.getNumColumns(); x++) {
             for(int y = 0; y < mySheet.getNumRows(); y++) {
