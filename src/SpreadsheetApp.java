@@ -110,7 +110,7 @@ public class SpreadsheetApp {
 
     public static void main(String[] args) {
         new GUI().start();
-        Spreadsheet theSpreadsheet = new Spreadsheet(8,8);
+        Spreadsheet theSpreadsheet = new Spreadsheet(8,10);
 
         boolean done = false;
         String command = "";
