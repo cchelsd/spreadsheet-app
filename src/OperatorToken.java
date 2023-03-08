@@ -16,14 +16,26 @@ public class OperatorToken extends Token {
 
     public char myToken;
 
+    /**
+     * Creates a operator token using the input character.
+     * @param theToken a character representing an operator.
+     */
     public OperatorToken(char theToken) {
         myToken = theToken;
     }
 
+    /**
+     * gets the operator token.
+     * @return the node that we need to get.
+     */
     public char getToken() {
         return myToken;
     }
 
+    /**
+     * Converts the character to a string.
+     * @return The character stored in the operator token as a string.
+     */
     public String toString() {
         return Character.toString(myToken);
     }
