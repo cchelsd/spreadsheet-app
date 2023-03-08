@@ -166,7 +166,7 @@ public class GUI extends JFrame {
             if (option == JFileChooser.APPROVE_OPTION) {
                 File file1 = fileChooser.getSelectedFile();
                 try {
-                    mySheet.readFromFile(file1.getAbsolutePath(), myTable, myRowHeader);
+                    mySheet.readFromFile(file1.getAbsolutePath(), myTable);
                     updateAllCells();
                 } catch (IOException ex) {
                     ex.printStackTrace();
