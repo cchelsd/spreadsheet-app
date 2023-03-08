@@ -524,9 +524,8 @@ public class Spreadsheet {
      * Read the spreadsheet values from a file and loads it into the current table.
      * @param file the file to read
      * @param mainTable the spreadsheet table
-     * @param headerTable the row header table
      */
-    public void readFromFile(String file, JTable mainTable, JTable headerTable) throws IOException {
+    public void readFromFile(String file, JTable mainTable) throws IOException {
         FileReader reader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(reader);
         String line;
@@ -537,12 +536,6 @@ public class Spreadsheet {
         int row = 0;
         while ((line = bufferedReader.readLine()) != null) {
             String[] columns = line.split("\t");
-            // checks size of table in file
-            if (headerColumns.length - 1 > mainTable.getColumnCount() || headerColumns.length - 1 < mainTable.getColumnCount()
-                    || columns.length - 1 > mainTable.getColumnCount() || row >= mainTable.getRowCount()) {
-                bufferedReader.close();
-                throw new IllegalArgumentException("File differs in size from the current table.");
-            }
             // reads the values in the file and loads it into current table
             for (int i = 1; i < columns.length; i++) {
                 mainTable.setValueAt(columns[i], row, i-1);
