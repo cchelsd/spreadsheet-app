@@ -1,8 +1,8 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -485,5 +485,59 @@ public class Spreadsheet {
             }
             System.out.println();
         }
+    }
+
+    public void saveToFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
+        FileWriter writer = new FileWriter(theFilePath);
+
+        writer.write("\t");
+        JTableHeader header = mainTable.getTableHeader();
+        for (int i = 0; i < header.getColumnModel().getColumnCount(); i++) {
+            writer.write(header.getColumnModel().getColumn(i).getHeaderValue().toString() + "\t");
+        }
+        writer.write("\n");
+
+
+        for (int i = 0; i < cells.length; i++) {
+            writer.write(headerTable.getValueAt(i, 0).toString() + "\t");
+            for (int j = 0; j < cells[i].length; j++) {
+                Cell cell = cells[i][j];
+                String formula = cell.getFormula();
+                if (formula != null) {
+                    writer.write(formula);
+                }
+                writer.write("\t");
+            }
+            writer.write("\n");
+        }
+        writer.close();
+    }
+
+    public void readFromFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
+        FileReader reader = new FileReader(theFilePath);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line;
+
+        // read the header row
+        line = bufferedReader.readLine();
+        String[] headerColumns = line.split("\t");
+
+        int row = 0;
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] columns = line.split("\t");
+            if (headerColumns.length - 1 > mainTable.getColumnCount() || headerColumns.length - 1 < mainTable.getColumnCount()
+                    || columns.length - 1 > mainTable.getColumnCount() || row >= mainTable.getRowCount()) {
+                bufferedReader.close();
+                throw new IllegalArgumentException("File differs in size from the current table.");
+            }
+            headerTable.setValueAt(columns[0], row, 0);
+            for (int i = 1; i < columns.length; i++) {
+                mainTable.setValueAt(columns[i], row, i-1);
+                Cell cell = cells[row][i-1];
+                cell.setFormula(columns[i]);
+            }
+            row++;
+        }
+        bufferedReader.close();
     }
 }

@@ -1,11 +1,19 @@
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
+/**
+ * The graphical user interface for a spreadsheet application.
+ * @author Chelsea Dacones
+ * @author Makai Martines
+ * @author Elias Peterson
+ * @author Alexis Zakrzewski
+ */
 public class GUI extends JFrame {
     private final JTable myTable;
     private JTable myRowHeader;
@@ -13,6 +21,9 @@ public class GUI extends JFrame {
     private final JScrollPane myScrollPane;
     private JTextField myInputBar;
     private final JTableHeader myHeader;
+    private final DefaultTableCellRenderer headerRenderer;
+
+    private JMenuBar myMenuBar;
 
     /**
      * A constructor for the GUI that creates a new spreadsheet and initializes
@@ -24,11 +35,12 @@ public class GUI extends JFrame {
         myTable = new JTable(myModel);
         myScrollPane = new JScrollPane(myTable);
         myHeader = myTable.getTableHeader();
+        headerRenderer = (DefaultTableCellRenderer) myTable.getTableHeader().getDefaultRenderer();
     }
 
     /**
      * Runs the program.
-     * @param args command line arguments.
+     * @param args
      */
     public static void main(String[] args) {
         new GUI().start();
@@ -47,10 +59,10 @@ public class GUI extends JFrame {
                     "Number of Columns:", colInput}, "Enter spreadsheet size", JOptionPane.OK_CANCEL_OPTION);
             if (input == JOptionPane.OK_OPTION) {
                 try {
-                    int numRows = Integer.parseInt(rowInput.getText().trim());
-                    int numCols = Integer.parseInt(colInput.getText().trim());
-                    if (numRows > 0 && numCols > 0) {
-                        mySheet = new Spreadsheet(numRows, numCols);
+                    int rows = Integer.parseInt(rowInput.getText().trim());
+                    int columns = Integer.parseInt(colInput.getText().trim());
+                    if (rows > 0 && columns > 0) {
+                        mySheet = new Spreadsheet(rows, columns);
                         validInput = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Invalid input. Please enter positive integers.");
@@ -64,49 +76,20 @@ public class GUI extends JFrame {
         }
     }
 
-    /**
-     * Creates a header for each row.
-     */
     public void createRowHeader() {
-        myRowHeader = new JTable(new AbstractTableModel() {
+        myRowHeader = new JTable(new DefaultTableModel(mySheet.getNumRows(), 1) {
             @Override
-            public int getRowCount() {
-                return myTable.getRowCount();
-            }
-            @Override
-            public int getColumnCount() {
-                return 1;
-            }
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                return Integer.toString(rowIndex);
+            public Object getValueAt(int row, int col) {
+                return Integer.toString(row);
             }
         });
-        JViewport rowHeaderViewport = new JViewport();
-        rowHeaderViewport.setView(myRowHeader);
         myRowHeader.setPreferredScrollableViewportSize(new Dimension(30,0));
         myRowHeader.setGridColor(new Color(212, 212, 212));
         myRowHeader.setOpaque(true);
         myRowHeader.setBackground(new Color(248, 248, 248));
-        myScrollPane.setRowHeader(rowHeaderViewport);
+        myScrollPane.setRowHeaderView(myRowHeader);
     }
 
-    /**
-     * Starts running the GUI.
-     */
-    public void start() {
-        setUpComponents();
-        pack();
-        setResizable(true);
-        setTitle("TCSS 342 - Spreadsheet");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    /**
-     * Creates the input bar/text field where formulas are input.
-     */
     public void createInputBar() {
         myInputBar = new JTextField();
         myInputBar.addActionListener(e -> {
@@ -131,15 +114,58 @@ public class GUI extends JFrame {
         add(myInputBar, BorderLayout.NORTH);
     }
 
-    /**
-     * Updates all the cells displayed values
-     */
+    public void createMenu() {
+        myMenuBar = new JMenuBar();
+        JMenu edit = new JMenu("Edit");
+        JMenuItem clear  = new JMenuItem("Clear");
+        clear.addActionListener(e -> {
+            for (int row = 0; row < myTable.getRowCount(); row++) {
+                for (int col = 0; col < myTable.getColumnCount(); col++) {
+                    myTable.setValueAt(null, row, col);
+                }
+            }
+        });
+        JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File("."));
+            int option = fileChooser.showSaveDialog(GUI.this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                String filePath = fileChooser.getSelectedFile().getPath();
+                try {
+                    mySheet.saveToFile(filePath, myTable, myRowHeader);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+        });
+        JMenuItem read = new JMenuItem("Read");
+        read.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File("."));
+            int option = fileChooser.showOpenDialog(GUI.this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File file1 = fileChooser.getSelectedFile();
+                try {
+                    mySheet.readFromFile(file1.getAbsolutePath(), myTable, myRowHeader);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage() + "\nPlease create a new spreadsheet.");
+                }
+            }
+        });
+        edit.add(read);
+        edit.add(save);
+        edit.add(clear);
+        myMenuBar.add(edit);
+    }
+
     public void updateAllCells() {
-        CellToken cellToken = new CellToken();
         for(int x = 0; x < mySheet.getNumColumns(); x++) {
             for(int y = 0; y < mySheet.getNumRows(); y++) {
-                cellToken.setRow(y);
-                cellToken.setColumn(x);
+                CellToken cellToken = new CellToken(x, y);
                 // Only print a value in this cell if it actually has a formula in it.
                 if(mySheet.getCell(cellToken).getFormula().compareTo("") != 0) {
                     myTable.setValueAt(mySheet.getCell(cellToken).evaluate(mySheet), y, x);
@@ -149,15 +175,18 @@ public class GUI extends JFrame {
     }
 
     /**
-     * Sets the components used in the GUI and adds a mouse clicked listener.
+     * Sets up the components in this frame.
      */
     public void setUpComponents() {
         myTable.setGridColor(new Color(212, 212, 212));
         myTable.setShowGrid(true);
         myTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         myTable.setCellSelectionEnabled(true);
-        myTable.getModel().addTableModelListener(new SpreadsheetListener());
-        myTable.setDefaultEditor(Object.class, null);
+        myTable.setDefaultEditor(Object.class, null); // make cells uneditable
+        headerRenderer.setHorizontalAlignment(JLabel.CENTER); // center text in column header
+        myTable.getTableHeader().setDefaultRenderer(headerRenderer);
+
+        // display the cell formula in the input bar upon selection of the cell
         myTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -170,26 +199,30 @@ public class GUI extends JFrame {
                 Cell cell = mySheet.getCell(curr);
                 myInputBar.setText(cell.getFormula());
                 //sets cursor position after setting text to prevent highlighting of text in input bar
-//                myInputBar.selectAll();
-//                SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
+                SwingUtilities.invokeLater(() -> myInputBar.setCaretPosition(myInputBar.getText().length()));
             }
         });
         myHeader.setBackground(new Color(250, 250, 250));
-        createInputBar();
         int height = myTable.getRowHeight() * myTable.getRowCount();
         int width = myTable.getColumnModel().getTotalColumnWidth();
         myScrollPane.setPreferredSize(new Dimension(width, height + 35));
+        createInputBar();
         createRowHeader();
+        createMenu();
+        setJMenuBar(myMenuBar);
         add(myScrollPane);
     }
 
-    public class SpreadsheetListener implements TableModelListener {
-        public SpreadsheetListener() {
-            myTable.getModel().addTableModelListener(this);
-        }
-        @Override
-        public void tableChanged(TableModelEvent e) {
-
-        }
+    /**
+     * Performs all tasks necessary to display the UI.
+     */
+    public void start() {
+        setUpComponents();
+        pack();
+        setResizable(true);
+        setTitle("TCSS 342 - Spreadsheet");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 }
