@@ -497,7 +497,6 @@ public class Spreadsheet {
         }
         writer.write("\n");
 
-
         for (int i = 0; i < cells.length; i++) {
             writer.write(headerTable.getValueAt(i, 0).toString() + "\t");
             for (int j = 0; j < cells[i].length; j++) {
@@ -533,11 +532,12 @@ public class Spreadsheet {
             headerTable.setValueAt(columns[0], row, 0);
             for (int i = 1; i < columns.length; i++) {
                 mainTable.setValueAt(columns[i], row, i-1);
-                Cell cell = cells[row][i-1];
-                cell.setFormula(columns[i]);
+                CellToken curr = new CellToken(i-1, row);
+                changeCellFormulaAndRecalculate(curr, columns[i]);
             }
             row++;
         }
         bufferedReader.close();
+
     }
 }

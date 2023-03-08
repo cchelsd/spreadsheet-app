@@ -149,6 +149,7 @@ public class GUI extends JFrame {
                 File file1 = fileChooser.getSelectedFile();
                 try {
                     mySheet.readFromFile(file1.getAbsolutePath(), myTable, myRowHeader);
+                    updateAllCells();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 } catch (IllegalArgumentException ex) {
