@@ -487,6 +487,13 @@ public class Spreadsheet {
         }
     }
 
+    /**
+     * Saves the current spreadsheet as a file.
+     * @param theFilePath
+     * @param mainTable
+     * @param headerTable
+     * @throws IOException
+     */
     public void saveToFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
         FileWriter writer = new FileWriter(theFilePath);
 
@@ -512,6 +519,13 @@ public class Spreadsheet {
         writer.close();
     }
 
+    /**
+     * Opens a file chooser window that defaults to the current directory.
+     * @param theFilePath
+     * @param mainTable
+     * @param headerTable
+     * @throws IOException
+     */
     public void readFromFile(String theFilePath, JTable mainTable, JTable headerTable) throws IOException {
         FileReader reader = new FileReader(theFilePath);
         BufferedReader bufferedReader = new BufferedReader(reader);
