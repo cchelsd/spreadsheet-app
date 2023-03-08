@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -116,6 +118,7 @@ public class GUI extends JFrame {
 
     public void createMenu() {
         myMenuBar = new JMenuBar();
+        JMenu file = new JMenu("File");
         JMenu edit = new JMenu("Edit");
         JMenuItem clear  = new JMenuItem("Clear");
         clear.addActionListener(e -> {
@@ -127,6 +130,10 @@ public class GUI extends JFrame {
             }
             updateAllCells();
         });
+
+        JMenuItem newSpreadsheet = new JMenuItem("New");
+        newSpreadsheet.addActionListener(e -> new GUI().start());
+
         JMenuItem save = new JMenuItem("Save");
         save.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
@@ -140,10 +147,9 @@ public class GUI extends JFrame {
                     throw new RuntimeException(ex);
                 }
             }
-
         });
-        JMenuItem read = new JMenuItem("Read");
-        read.addActionListener(e -> {
+        JMenuItem open = new JMenuItem("Open...");
+        open.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File("."));
             int option = fileChooser.showOpenDialog(GUI.this);
@@ -159,9 +165,11 @@ public class GUI extends JFrame {
                 }
             }
         });
-        edit.add(read);
-        edit.add(save);
+        file.add(newSpreadsheet);
+        file.add(open);
+        file.add(save);
         edit.add(clear);
+        myMenuBar.add(file);
         myMenuBar.add(edit);
     }
 
@@ -178,9 +186,6 @@ public class GUI extends JFrame {
             }
         }
     }
-
-
-
 
     /**
      * Sets up the components in this frame.
